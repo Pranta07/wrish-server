@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const cors = require("cors");
 const { MongoClient } = require("mongodb");
+const ObjectId = require("mongodb").ObjectId;
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -42,6 +43,15 @@ async function run() {
         //get api to get all reviews
         app.get("/reviews", async (req, res) => {
             const result = await reviewCollection.find({}).toArray();
+            res.send(result);
+        });
+
+        //get api for single product
+        app.get("/purchase/:id", async (req, res) => {
+            const query = { _id: ObjectId(req.params.id) };
+
+            const result = await watchCollection.findOne(query);
+
             res.send(result);
         });
     } finally {
