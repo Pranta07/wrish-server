@@ -15,19 +15,27 @@ const client = new MongoClient(uri, {
     useUnifiedTopology: true,
 });
 
+app.get("/", (req, res) => {
+    res.send("Wrish Watch server is running!");
+});
+
 async function run() {
     try {
         await client.connect();
-        console.log("mongodb connected");
+        // console.log("mongodb connected");
+        const database = client.db("WrishWatch");
+        const watchCollection = database.collection("watches");
+
+        //get api for all watches
+        app.get("/watches", async (req, res) => {
+            const result = await watchCollection.find({}).toArray();
+            res.send(result);
+        });
     } finally {
         // await client.close();
     }
 }
 run().catch(console.dir);
-
-app.get("/", (req, res) => {
-    res.send("Hello World!");
-});
 
 app.listen(port, () => {
     console.log(`listening at port ${port}`);
