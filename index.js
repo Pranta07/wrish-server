@@ -25,10 +25,23 @@ async function run() {
         // console.log("mongodb connected");
         const database = client.db("WrishWatch");
         const watchCollection = database.collection("watches");
+        const reviewCollection = database.collection("reviews");
 
-        //get api for all watches
-        app.get("/watches", async (req, res) => {
-            const result = await watchCollection.find({}).toArray();
+        //get api for watches collection
+        app.get("/watches/:count", async (req, res) => {
+            let result;
+            if (req.params.count === "all") {
+                result = await watchCollection.find({}).toArray();
+            } else {
+                const count = parseInt(req.params.count);
+                result = await watchCollection.find({}).limit(count).toArray();
+            }
+            res.send(result);
+        });
+
+        //get api to get all reviews
+        app.get("/reviews", async (req, res) => {
+            const result = await reviewCollection.find({}).toArray();
             res.send(result);
         });
     } finally {
