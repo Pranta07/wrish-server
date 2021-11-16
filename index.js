@@ -28,6 +28,7 @@ async function run() {
         const watchCollection = database.collection("watches");
         const reviewCollection = database.collection("reviews");
         const ordersCollection = database.collection("orders");
+        const usersCollection = database.collection("users");
 
         //get api for watches collection
         app.get("/watches/:count", async (req, res) => {
@@ -44,6 +45,14 @@ async function run() {
         //get api to get all reviews
         app.get("/reviews", async (req, res) => {
             const result = await reviewCollection.find({}).toArray();
+            res.json(result);
+        });
+
+        // posting a review
+        app.post("/reviews", async (req, res) => {
+            const review = req.body;
+            // console.log(user);
+            const result = await reviewCollection.insertOne(review);
             res.json(result);
         });
 
@@ -70,6 +79,22 @@ async function run() {
             // console.log(req.body);
             const doc = req.body;
             const result = await ordersCollection.insertOne(doc);
+            res.json(result);
+        });
+
+        //delete api for orders
+        app.delete("/orders/:id", async (req, res) => {
+            // const id = req.params.id;
+            // console.log(id);
+            const query = { _id: ObjectId(req.params.id) };
+            const result = await ordersCollection.deleteOne(query);
+            res.json(result);
+        });
+
+        app.post("/users", async (req, res) => {
+            const user = req.body;
+            // console.log(user);
+            const result = await usersCollection.insertOne(user);
             res.json(result);
         });
     } finally {
