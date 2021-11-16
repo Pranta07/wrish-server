@@ -91,6 +91,13 @@ async function run() {
             res.json(result);
         });
 
+        app.get("/users/:email", async (req, res) => {
+            const email = req.params.email;
+            const query = { email: email };
+            const result = await usersCollection.findOne(query);
+            res.json(result);
+        });
+
         app.post("/users", async (req, res) => {
             const user = req.body;
             // console.log(user);
