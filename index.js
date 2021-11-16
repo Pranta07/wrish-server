@@ -49,6 +49,14 @@ async function run() {
             res.json(result);
         });
 
+        //deleting products
+        app.delete("/watches/:id", async (req, res) => {
+            // const id = req.params.id;
+            const query = { _id: ObjectId(req.params.id) };
+            const result = await watchCollection.deleteOne(query);
+            res.json(result);
+        });
+
         //get api to get all reviews
         app.get("/reviews", async (req, res) => {
             const result = await reviewCollection.find({}).toArray();
