@@ -42,6 +42,12 @@ async function run() {
             res.json(result);
         });
 
+        app.post("/watches", async (req, res) => {
+            const product = req.body;
+            const result = await watchCollection.insertOne(product);
+            res.json(result);
+        });
+
         //get api to get all reviews
         app.get("/reviews", async (req, res) => {
             const result = await reviewCollection.find({}).toArray();
@@ -51,7 +57,6 @@ async function run() {
         // posting a review
         app.post("/reviews", async (req, res) => {
             const review = req.body;
-            // console.log(user);
             const result = await reviewCollection.insertOne(review);
             res.json(result);
         });
@@ -85,12 +90,12 @@ async function run() {
         //delete api for orders
         app.delete("/orders/:id", async (req, res) => {
             // const id = req.params.id;
-            // console.log(id);
             const query = { _id: ObjectId(req.params.id) };
             const result = await ordersCollection.deleteOne(query);
             res.json(result);
         });
 
+        //to verify an user is admin or not
         app.get("/users/:email", async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
