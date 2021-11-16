@@ -27,6 +27,7 @@ async function run() {
         const database = client.db("WrishWatch");
         const watchCollection = database.collection("watches");
         const reviewCollection = database.collection("reviews");
+        const ordersCollection = database.collection("orders");
 
         //get api for watches collection
         app.get("/watches/:count", async (req, res) => {
@@ -37,13 +38,13 @@ async function run() {
                 const count = parseInt(req.params.count);
                 result = await watchCollection.find({}).limit(count).toArray();
             }
-            res.send(result);
+            res.json(result);
         });
 
         //get api to get all reviews
         app.get("/reviews", async (req, res) => {
             const result = await reviewCollection.find({}).toArray();
-            res.send(result);
+            res.json(result);
         });
 
         //get api for single product
@@ -52,7 +53,15 @@ async function run() {
 
             const result = await watchCollection.findOne(query);
 
-            res.send(result);
+            res.json(result);
+        });
+
+        //post api for recieving order
+        app.post("/orders", async (req, res) => {
+            // console.log(req.body);
+            const doc = req.body;
+            const result = await ordersCollection.insertOne(doc);
+            res.json(result);
         });
     } finally {
         // await client.close();
