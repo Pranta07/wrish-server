@@ -42,6 +42,7 @@ async function run() {
             res.json(result);
         });
 
+        //add product api
         app.post("/watches", async (req, res) => {
             const product = req.body;
             const result = await watchCollection.insertOne(product);
@@ -79,11 +80,28 @@ async function run() {
             res.json(result);
         });
 
+        app.get("/manage/orders", async (req, res) => {
+            const result = await ordersCollection.find({}).toArray();
+            res.json(result);
+        });
+
         //post api for recieving order
         app.post("/orders", async (req, res) => {
             // console.log(req.body);
             const doc = req.body;
             const result = await ordersCollection.insertOne(doc);
+            res.json(result);
+        });
+
+        //updating status
+        app.put("/orders/:id", async (req, res) => {
+            const filter = { _id: ObjectId(req.params.id) };
+            const updateDoc = {
+                $set: {
+                    status: true,
+                },
+            };
+            const result = await ordersCollection.updateOne(filter, updateDoc);
             res.json(result);
         });
 
