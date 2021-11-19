@@ -4,6 +4,7 @@ const cors = require("cors");
 const { MongoClient } = require("mongodb");
 const ObjectId = require("mongodb").ObjectId;
 const admin = require("firebase-admin");
+const fileUpload = require("express-fileupload");
 
 //require("./wrish-firebase-adminsdk.json")
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
@@ -15,8 +16,10 @@ admin.initializeApp({
 const app = express();
 const port = process.env.PORT || 5000;
 
+//middleware
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 
 app.get("/", (req, res) => {
     res.send("Wrish Watch server is running!");
@@ -79,6 +82,14 @@ async function run() {
         //add product api
         app.post("/watches", async (req, res) => {
             const product = req.body;
+            const file = req.files;
+            // console.log(product, file);
+            const imgData = req.files.img.data;
+            const encodedData = imgData.toString("base64");
+            const imgBuffer = Buffer.from(encodedData, "base64");
+
+            product.img = imgBuffer;
+            console.log(product);
             const result = await watchCollection.insertOne(product);
             res.json(result);
         });
