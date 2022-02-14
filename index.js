@@ -68,15 +68,17 @@ async function run() {
         const usersCollection = database.collection("users");
 
         //get api for watches collection
-        app.get("/watches/:count", async (req, res) => {
-            let result;
-            if (req.params.count === "all") {
-                result = await watchCollection.find({}).toArray();
-            } else {
-                const count = parseInt(req.params.count);
-                result = await watchCollection.find({}).limit(count).toArray();
-            }
-            res.json(result);
+        app.get("/watches", async (req, res) => {
+            const page = req.query.page;
+            const cursor = watchCollection.find({});
+            const count = await cursor.count();
+
+            const products = await cursor
+                .skip((page - 1) * 4)
+                .limit(4)
+                .toArray();
+
+            res.json({ count, products });
         });
 
         //add product api
@@ -89,7 +91,7 @@ async function run() {
             const imgBuffer = Buffer.from(encodedData, "base64");
 
             product.img = imgBuffer;
-            console.log(product);
+            // console.log(product);
             const result = await watchCollection.insertOne(product);
             res.json(result);
         });
