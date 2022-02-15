@@ -130,8 +130,17 @@ async function run() {
         app.get("/orders/:email", async (req, res) => {
             const email = req.params.email;
             const query = { email: email };
-            const result = await ordersCollection.find(query).toArray();
-            res.json(result);
+
+            const page = parseInt(req.query.page);
+            const rows = parseInt(req.query.rows);
+            const result = await ordersCollection
+                .find(query)
+                .skip(page * rows)
+                .limit(rows)
+                .toArray();
+
+            const count = await ordersCollection.find(query).count();
+            res.json({ count, products: result });
         });
 
         //get api for a specific order
