@@ -69,8 +69,8 @@ async function run() {
 
         //get api for watches collection
         app.get("/watches", async (req, res) => {
-            const page = req.query.page;
-            const productCount = req.query.productCount;
+            const page = parseInt(req.query.page);
+            const productCount = parseInt(req.query.productCount);
             const cursor = watchCollection.find({});
             const count = await cursor.count();
 
