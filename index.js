@@ -152,8 +152,17 @@ async function run() {
         });
 
         app.get("/manage/orders", async (req, res) => {
-            const result = await ordersCollection.find({}).toArray();
-            res.json(result);
+            const page = parseInt(req.query.page);
+            const rows = parseInt(req.query.rows);
+
+            const result = await ordersCollection
+                .find({})
+                .skip(page * rows)
+                .limit(rows)
+                .toArray();
+
+            const count = await ordersCollection.find({}).count();
+            res.json({ count, orders: result });
         });
 
         //post api for recieving order
