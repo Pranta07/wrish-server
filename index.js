@@ -215,11 +215,15 @@ async function run() {
             res.json(result);
         });
 
+        //post api for saving user info into db
         app.post("/users", async (req, res) => {
             const user = req.body;
-            // console.log(user);
-            const result = await usersCollection.insertOne(user);
-            res.json(result);
+            const query = { email: user.email };
+            const result = await usersCollection.findOne(query);
+            // console.log(result);
+            if (!result) {
+                await usersCollection.insertOne(user);
+            }
         });
 
         // put api for make an admin from existing users
